@@ -13,7 +13,7 @@ public class APIEventController {
         return List.of("event1", "event2");
     }
 
-    @GetMapping("/events")
+    @PostMapping("/events")
     public Boolean creatEvents() {
         return true;
     }
