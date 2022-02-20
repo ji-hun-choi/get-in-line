@@ -2,8 +2,8 @@ package com.uno.getinline.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uno.getinline.constant.ErrorCode;
-import com.uno.getinline.constant.EventStatus;
-import com.uno.getinline.dto.EventResponse;
+import com.uno.getinline.constant.PlaceType;
+import com.uno.getinline.dto.PlaceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,164 +11,145 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(APIEventController.class)
-class APIEventControllerTest {
+@WebMvcTest(APIPlaceController.class)
+class APIPlaceControllerTest {
 
     private final MockMvc mvc;
     private final ObjectMapper mapper;
 
-    public APIEventControllerTest(
+    public APIPlaceControllerTest(
             @Autowired MockMvc mvc,
             @Autowired ObjectMapper mapper
-    ) {
+            ) {
         this.mvc = mvc;
         this.mapper = mapper;
     }
 
-    @DisplayName("[API][GET] 이벤트 리스트 조회")
+    @DisplayName("[API][GET] 장소 리스트 조회 - 장소 리스트 데이터를 담은 표준 API 출력")
     @Test
-    void givenNothing_whenRequestingEvents_thenReturnsListOfEventsInStandardResponse() throws Exception {
+    void givenNothing_whenRequestingPlaces_thenReturnsPlacesInStandardResponse() throws Exception {
         // Given
 
         // When & Then
-        mvc.perform(get("/api/events"))
+        mvc.perform(get("/api/places"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data[0].placeId").value(1L))
-                .andExpect(jsonPath("$.data[0].eventName").value("오후 운동"))
-                .andExpect(jsonPath("$.data[0].eventStatus").value(EventStatus.OPENED.name()))
-                .andExpect(jsonPath("$.data[0].eventStartDatetime").value(LocalDateTime
-                        .of(2021, 1, 1, 13, 0, 0)
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andExpect(jsonPath("$.data[0].eventEndDatetime").value(LocalDateTime
-                        .of(2021, 1, 1, 16, 0, 0)
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andExpect(jsonPath("$.data[0].currentNumberOfPeople").value(0))
-                .andExpect(jsonPath("$.data[0].capacity").value(24))
-                .andExpect(jsonPath("$.data[0].memo").value("마스크 꼭 착용하세요"))
+                .andExpect(jsonPath("$.data[0].placeType").value(PlaceType.COMMON.name()))
+                .andExpect(jsonPath("$.data[0].placeName").value("랄라배드민턴장"))
+                .andExpect(jsonPath("$.data[0].address").value("서울시 강남구 강남대로 1234"))
+                .andExpect(jsonPath("$.data[0].phoneNumber").value("010-1234-5678"))
+                .andExpect(jsonPath("$.data[0].capacity").value(30))
+                .andExpect(jsonPath("$.data[0].memo").value("신장개업"))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][POST] 이벤트 생성")
+    @DisplayName("[API][POST] 장소 생성")
     @Test
-    void givenEvent_whenCreatingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
+    void givenPlace_whenCreatingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
         // Given
-        EventResponse eventResponse = EventResponse.of(
-                1L,
-                "오후 운동",
-                EventStatus.OPENED,
-                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                0,
-                24,
-                "마스크 꼭 착용하세요"
+        PlaceRequest placeRequest = PlaceRequest.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
         );
 
         // When & Then
         mvc.perform(
-                        post("/api/events")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                post("/api/places")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(placeRequest))
+        )
                 .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][GET] 단일 이벤트 조회 - 이벤트 있는 경우, 이벤트 데이터를 담은 표준 API 출력")
+    @DisplayName("[API][GET] 단일 장소 조회 - 장소 있는 경우, 장소 데이터를 담은 표준 API 출력")
     @Test
-    void givenEventId_whenRequestingExistentEvent_thenReturnsEventInStandardResponse() throws Exception {
+    void givenPlaceId_whenRequestingExistentPlace_thenReturnsPlaceInStandardResponse() throws Exception {
         // Given
-        long eventId = 1L;
+        long placeId = 1L;
 
         // When & Then
-        mvc.perform(get("/api/events/" + eventId))
+        mvc.perform(get("/api/places/" + placeId))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isMap())
-                .andExpect(jsonPath("$.data.placeId").value(1L))
-                .andExpect(jsonPath("$.data.eventName").value("오후 운동"))
-                .andExpect(jsonPath("$.data.eventStatus").value(EventStatus.OPENED.name()))
-                .andExpect(jsonPath("$.data.eventStartDatetime").value(LocalDateTime
-                        .of(2021, 1, 1, 13, 0, 0)
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andExpect(jsonPath("$.data.eventEndDatetime").value(LocalDateTime
-                        .of(2021, 1, 1, 16, 0, 0)
-                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andExpect(jsonPath("$.data.currentNumberOfPeople").value(0))
-                .andExpect(jsonPath("$.data.capacity").value(24))
-                .andExpect(jsonPath("$.data.memo").value("마스크 꼭 착용하세요"))
+                .andExpect(jsonPath("$.data.placeType").value(PlaceType.COMMON.name()))
+                .andExpect(jsonPath("$.data.placeName").value("랄라배드민턴장"))
+                .andExpect(jsonPath("$.data.address").value("서울시 강남구 강남대로 1234"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("010-1234-5678"))
+                .andExpect(jsonPath("$.data.capacity").value(30))
+                .andExpect(jsonPath("$.data.memo").value("신장개업"))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][GET] 단일 이벤트 조회 - 이벤트 없는 경우, 빈 표준 API 출력")
+    @DisplayName("[API][GET] 단일 장소 조회 - 장소 없는 경우, 빈 표준 API 출력")
     @Test
-    void givenEventId_whenRequestingNonexistentEvent_thenReturnsEmptyStandardResponse() throws Exception {
+    void givenPlaceId_whenRequestingNonexistentPlace_thenReturnsEmptyStandardResponse() throws Exception {
         // Given
-        long eventId = 2L;
+        long placeId = 2L;
 
         // When & Then
-        mvc.perform(get("/api/events/" + eventId))
+        mvc.perform(get("/api/places/" + placeId))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][PUT] 이벤트 변경")
+    @DisplayName("[API][PUT] 장소 변경")
     @Test
-    void givenEvent_whenModifyingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
+    void givenPlace_whenModifyingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
         // Given
-        long eventId = 1L;
-        EventResponse eventResponse = EventResponse.of(
-                1L,
-                "오후 운동",
-                EventStatus.OPENED,
-                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                0,
-                24,
-                "마스크 꼭 착용하세요"
+        long placeId = 1L;
+        PlaceRequest placeRequest = PlaceRequest.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
         );
 
         // When & Then
         mvc.perform(
-                        put("/api/events/" + eventId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                put("/api/places/" + placeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(placeRequest))
+        )
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
-    @DisplayName("[API][DELETE] 이벤트 삭제")
+    @DisplayName("[API][DELETE] 장소 삭제")
     @Test
-    void givenEvent_whenDeletingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
+    void givenPlace_whenDeletingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
         // Given
-        long eventId = 1L;
+        long placeId = 1L;
 
         // When & Then
-        mvc.perform(delete("/api/events/" + eventId))
+        mvc.perform(delete("/api/places/" + placeId))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
