@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uno.getinline.constant.ErrorCode;
 import com.uno.getinline.dto.AdminRequest;
 import com.uno.getinline.dto.LoginRequest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Disabled("API 컨트롤러가 필요없는 상황이어서 비활성화")
+@DisplayName("API 컨트롤러 - 인증")
 @WebMvcTest(APIAuthController.class)
 class APIAuthControllerTest {
 
@@ -42,10 +45,10 @@ class APIAuthControllerTest {
 
         // When & Then
         mvc.perform(
-                        post("/api/sign-up")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(adminRequest))
-                )
+                post("/api/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(adminRequest))
+        )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
@@ -64,10 +67,10 @@ class APIAuthControllerTest {
 
         // When & Then
         mvc.perform(
-                        post("/api/login")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(loginRequest))
-                )
+                post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(loginRequest))
+        )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))

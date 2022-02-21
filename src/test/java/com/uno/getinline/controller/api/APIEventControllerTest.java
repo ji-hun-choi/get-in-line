@@ -6,6 +6,7 @@ import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.dto.EventDTO;
 import com.uno.getinline.dto.EventResponse;
 import com.uno.getinline.service.EventService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Disabled("API 컨트롤러가 필요없는 상황이어서 비활성화")
+@DisplayName("API 컨트롤러 - 이벤트")
 @WebMvcTest(APIEventController.class)
 class APIEventControllerTest {
 
@@ -50,13 +54,13 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        get("/api/events")
-                                .queryParam("placeId", "1")
-                                .queryParam("eventName", "운동")
-                                .queryParam("eventStatus", EventStatus.OPENED.name())
-                                .queryParam("eventStartDatetime", "2021-01-01T00:00:00")
-                                .queryParam("eventEndDatetime", "2021-01-02T00:00:00")
-                )
+                get("/api/events")
+                        .queryParam("placeId", "1")
+                        .queryParam("eventName", "운동")
+                        .queryParam("eventStatus", EventStatus.OPENED.name())
+                        .queryParam("eventStartDatetime", "2021-01-01T00:00:00")
+                        .queryParam("eventEndDatetime", "2021-01-02T00:00:00")
+        )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isArray())
@@ -85,10 +89,10 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        get("/api/events")
-                                .queryParam("placeId", "0")
-                                .queryParam("eventName", "오")
-                )
+                get("/api/events")
+                        .queryParam("placeId", "0")
+                        .queryParam("eventName", "오")
+        )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
@@ -116,10 +120,10 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        post("/api/events")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(eventResponse))
+        )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(Boolean.TRUE.toString()))
@@ -147,10 +151,10 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        post("/api/events")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(eventResponse))
+        )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
@@ -243,10 +247,10 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        put("/api/events/" + eventId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                put("/api/events/" + eventId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(eventResponse))
+        )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(Boolean.TRUE.toString()))
@@ -275,10 +279,10 @@ class APIEventControllerTest {
 
         // When & Then
         mvc.perform(
-                        put("/api/events/" + eventId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(eventResponse))
-                )
+                put("/api/events/" + eventId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(eventResponse))
+        )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
