@@ -1,71 +1,51 @@
 package com.uno.getinline.controller;
 
-import com.uno.getinline.constant.EventStatus;
-import com.uno.getinline.dto.EventResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RequestMapping("/events")
-@Controller
-public class EventController {
+@WebMvcTest(EventController.class)
+class EventControllerTest {
 
-    @GetMapping
-    public ModelAndView events() {
-        Map<String, Object> map = new HashMap<>();
+    private final MockMvc mvc;
 
-        // TODO: 임시 데이터. 추후 삭제 예정
-        map.put("events", List.of(EventResponse.of(
-                        1L,
-                        1L,
-                        "오후 운동",
-                        EventStatus.OPENED,
-                        LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                        LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                        0,
-                        24,
-                        "마스크 꼭 착용하세요"
-                ), EventResponse.of(
-                        2L,
-                        1L,
-                        "오후 운동",
-                        EventStatus.OPENED,
-                        LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                        LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                        0,
-                        24,
-                        "마스크 꼭 착용하세요"
-                )
-        ));
-
-        return new ModelAndView("event/index", map);
+    public EventControllerTest(@Autowired MockMvc mvc) {
+        this.mvc = mvc;
     }
 
-    @GetMapping("/{eventId}")
-    public ModelAndView eventDetail(@PathVariable Long eventId) {
-        Map<String, Object> map = new HashMap<>();
+    @DisplayName("[view][GET] 이벤트 리스트 페이지")
+    @Test
+    void givenNothing_whenRequestingEventsPage_thenReturnsEventsPage() throws Exception {
+        // Given
 
-        // TODO: 임시 데이터. 추후 삭제 예정
-        map.put("event", EventResponse.of(
-                eventId,
-                1L,
-                "오후 운동",
-                EventStatus.OPENED,
-                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                0,
-                24,
-                "마스크 꼭 착용하세요"
-        ));
+        // When & Then
+        mvc.perform(get("/events"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("event/index"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().attributeExists("events"));
+    }
 
-        return new ModelAndView("event/detail", map);
+    @DisplayName("[view][GET] 이벤트 세부 정보 페이지")
+    @Test
+    void givenNothing_whenRequestingEventDetailPage_thenReturnsEventDetailPage() throws Exception {
+        // Given
+        long eventId = 1L;
+
+        // When & Then
+        mvc.perform(get("/events/" + eventId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("event/detail"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().attributeExists("event"));
     }
 
 }
