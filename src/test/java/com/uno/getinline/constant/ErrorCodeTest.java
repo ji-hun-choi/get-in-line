@@ -73,6 +73,7 @@ class ErrorCodeTest {
 
         // Then
         assertThat(result).isEqualTo("INTERNAL_ERROR (20000)");
+        
     }
 
 }
