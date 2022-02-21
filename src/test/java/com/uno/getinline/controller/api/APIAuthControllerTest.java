@@ -45,10 +45,10 @@ class APIAuthControllerTest {
 
         // When & Then
         mvc.perform(
-                post("/api/sign-up")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(adminRequest))
-        )
+                        post("/api/sign-up")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(adminRequest))
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
@@ -67,10 +67,10 @@ class APIAuthControllerTest {
 
         // When & Then
         mvc.perform(
-                post("/api/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(loginRequest))
-        )
+                        post("/api/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(loginRequest))
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))

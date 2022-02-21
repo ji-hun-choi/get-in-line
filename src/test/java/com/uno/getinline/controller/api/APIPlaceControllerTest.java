@@ -26,7 +26,7 @@ class APIPlaceControllerTest {
     public APIPlaceControllerTest(
             @Autowired MockMvc mvc,
             @Autowired ObjectMapper mapper
-            ) {
+    ) {
         this.mvc = mvc;
         this.mapper = mapper;
     }
@@ -67,10 +67,10 @@ class APIPlaceControllerTest {
 
         // When & Then
         mvc.perform(
-                post("/api/places")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(placeRequest))
-        )
+                        post("/api/places")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(placeRequest))
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
@@ -132,10 +132,10 @@ class APIPlaceControllerTest {
 
         // When & Then
         mvc.perform(
-                put("/api/places/" + placeId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(placeRequest))
-        )
+                        put("/api/places/" + placeId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(placeRequest))
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
