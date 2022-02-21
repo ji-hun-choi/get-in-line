@@ -82,5 +82,4 @@ class EventControllerTest {
 
         then(eventService).should().getEvent(eventId);
     }
-
 }
