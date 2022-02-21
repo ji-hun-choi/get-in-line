@@ -11,12 +11,12 @@ public class EventController {
 
     @GetMapping
     public String events() {
-        return "event/index";
+        return "index.mustache";
     }
 
     @GetMapping("/{eventId}")
     public String eventDetail(@PathVariable Long eventId) {
-        return "event/detail";
+        return "detail.mustache";
     }
 
 }
