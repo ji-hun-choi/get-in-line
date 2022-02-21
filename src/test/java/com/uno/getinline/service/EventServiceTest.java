@@ -307,5 +307,4 @@ class EventServiceTest {
                 "마스크 꼭 착용하세요"
         );
     }
-
 }
